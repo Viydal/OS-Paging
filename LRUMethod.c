@@ -1,7 +1,12 @@
 #include "LRUMethod.h"
+#include <stdio.h>
+
+void updateStack(page*, page, int);
+void updatePageTable(page*, page, page, int);
+void printStack(page*, int);
 
 // Run replacement algorithm LRU
-page replacePageLRU(page* pageTable, page* stack, int pageNumber, int numFrames) {
+page replacePageLRU(page* pageTable, page* stack, int pageNumber, char rw, int numFrames) {
     // Update page table
     for (int i = 0; i < numFrames - 1; i++) {
         if (pageTable[i + 1].pageNo == -1) {
@@ -15,6 +20,17 @@ page replacePageLRU(page* pageTable, page* stack, int pageNumber, int numFrames)
 			lastPage = stack[i];
 		}
 	}
+
+    page newPage;
+    newPage.pageNo = pageNumber;
+    newPage.modified = 0;
+    if (rw == 'W') {
+        newPage.modified = 1;
+    }
+
+    updateStack(stack, newPage, numFrames);
+    updatePageTable(pageTable, lastPage, newPage, numFrames);
+    
 	// printf("last page with number: %d\n", lastPage.pageNo);
 	return lastPage;
 }
@@ -44,10 +60,19 @@ void updateStack(page* stack, page pageToAdd, int numFrames) {
     }
 }
 
+void updatePageTable(page* pageTable, page pageToReplace, page newPage, int numFrames) {
+    for (int i = 0; i < numFrames; i++) {
+        if (pageTable[i].pageNo == pageToReplace.pageNo) {
+            pageTable[i] = newPage;
+            break;
+        }
+    }
+}
+
 void printStack(page* stack, int numFrames) {
 	printf("\n");
 	for (int i = 0; i < numFrames; i++) {
-		printf("%d ", stack[i].pageNo);
+		printf("%d, modified: %d | ", stack[i].pageNo, stack[i].modified);
 	}
-	printf("\n");
+	printf("- END\n");
 }

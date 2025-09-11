@@ -7,9 +7,13 @@
 
 enum repl { RANDOM, FIFO, LRU, CLOCK };
 int createMMU(int);
-int checkInMemory(int);
+int checkInMemory(int, char);
 int allocateFrame(int, char);
-page selectVictim(int, enum repl);
+page selectVictim(int, enum repl, char);
+page replacePageLRU(page*, page*, int, char, int);
+void updateStack(page*, page, int);
+void updatePageTable(page*, page, page, int);
+void printStack(page*, int);
 const int pageoffset = 12; /* Page size is fixed to 4 KB */
 int numFrames;
 page *pageTable;
@@ -44,7 +48,7 @@ int createMMU(int frames) {
 }
 
 /* Checks for residency: returns frame no or -1 if not found */
-int checkInMemory(int page_number) {
+int checkInMemory(int page_number, char rw) {
     int result = -1;
     // Error handling
     if (pageTable == NULL) {
@@ -57,10 +61,20 @@ int checkInMemory(int page_number) {
         // printf("%d, %d | ", pageTable[i].pageNo, page_number);
         if (pageTable[i].pageNo == page_number) {
             result = i;
-            break;
         }
     }
-    printf("\n");
+
+    if (result != -1) {
+        page newPage;
+        newPage.pageNo = page_number;
+        newPage.modified = 0;
+        
+        if (pageTable[result].modified == 1 || rw == 'W') {
+            newPage.modified = 1;
+        }
+        updatePageTable(pageTable, pageTable[result], newPage, numFrames);
+        updateStack(stack, newPage, numFrames);
+    }
 
     // Return index of page number
     return result;
@@ -85,12 +99,14 @@ int allocateFrame(int page_number, char rw) {
         }
     }
 
+    updateStack(stack, newPage, numFrames);
+
     return location;
 }
 
 /* Selects a victim for eviction/discard according to the replacement algorithm,
  * returns chosen frame_no  */
-page selectVictim(int page_number, enum repl mode) {
+page selectVictim(int page_number, enum repl mode, char rw) {
     page victim;
 
     // Implement individual page replacement algorithms here
@@ -99,10 +115,8 @@ page selectVictim(int page_number, enum repl mode) {
     } else if (mode == 1) {  // Page replacement method - FIFO
 
     } else if (mode == 2) {  // Page replacement method - LRU
-        victim = replacePageLRU(pageTable, stack, page_number, numFrames);
-        for (int i = 0; i < numFrames; i++) {
-            pageTable[i] = stack[i];
-        }
+        victim = replacePageLRU(pageTable, stack, page_number, rw, numFrames);
+        // printf("pagenumber: %d, modified: %d", victim.pageNo, victim.modified);
     } else if (mode == 3) {  // Page replacement method - CLOCK
 
     } else {
@@ -112,15 +126,25 @@ page selectVictim(int page_number, enum repl mode) {
     return (victim);
 }
 
-main(int argc, char *argv[]) {
+void printTable(page *pageTable, int numFrames) {
+    printf("\n");
+    printf("PAGE TABLE\n");
+	for (int i = 0; i < numFrames; i++) {
+		printf("%d, modified: %d | ", pageTable[i].pageNo, pageTable[i].modified);
+	}
+	printf("\n");
+}
+
+int main(int argc, char *argv[]) {
     char *tracename;
     int page_number, frame_no, done;
-    int do_line, i;
+    int do_line;
+    // int i; // not used
     int no_events, disk_writes, disk_reads;
     int debugmode;
     enum repl replace;
     int allocated = 0;
-    int victim_page;
+    // int victim_page; // not used
     unsigned address;
     char rw;
     page Pvictim;
@@ -178,18 +202,10 @@ main(int argc, char *argv[]) {
     while (do_line == 2) {
         page_number = address >> pageoffset;
 
-        page newPage;
-        newPage.pageNo = page_number;
-        newPage.modified = 0;
-        if (rw == 'W') {
-            newPage.modified = 1;
-        }
-        updateStack(stack, newPage, numFrames);
+        // printStack(stack, numFrames);
+        // printTable(pageTable, numFrames);
 
-        // Print stack
-        printStack(stack, numFrames);
-
-        frame_no = checkInMemory(page_number); /* ask for physical address */
+        frame_no = checkInMemory(page_number, rw); /* ask for physical address */
         if (frame_no == -1) {
             disk_reads++; /* Page fault, need to load it into memory */
             if (debugmode) printf("Page fault %8d \n", page_number);
@@ -199,13 +215,11 @@ main(int argc, char *argv[]) {
                 allocated++;
             } else {
                 Pvictim = selectVictim(
-                    page_number,
-                    replace); /* returns page number of the victim  */
+                    page_number, replace, rw); /* returns page number of the victim  */
                 frame_no = checkInMemory(
-                    page_number); /* find out the frame the new page is in */
+                    page_number, rw); /* find out the frame the new page is in */
                 if (Pvictim.modified) /* need to know victim page and modified  */
                 {
-                    printf("write MADE\n");
                     disk_writes++;
                     if (debugmode) printf("Disk write %8d \n", Pvictim.pageNo);
                 } else if (debugmode)
@@ -231,4 +245,6 @@ main(int argc, char *argv[]) {
     printf("total disk reads:     %d\n", disk_reads);
     printf("total disk writes:    %d\n", disk_writes);
     printf("page fault rate:      %.4f\n", (float)disk_reads / no_events);
+
+    return 0;
 }
