@@ -5,6 +5,7 @@
 #include "clock.h"
 #include "LRUMethod.h"
 #include "page.h"
+#include "rand.h"
 
 enum repl { RANDOM, FIFO, LRU, CLOCK };
 int createMMU(int);
@@ -91,7 +92,7 @@ int allocateFrame(int page_number, char rw) {
         newPage.modified = 1;
     }
 
-    int location;
+    int location ; // initialize to silence warning
     for (int i = 0; i < numFrames; i++) {
         // If spot is free set to relevant information
         if (pageTable[i].pageNo == -1) {
@@ -110,12 +111,13 @@ int allocateFrame(int page_number, char rw) {
  * returns chosen frame_no  */
 page selectVictim(int page_number, enum repl mode, char rw) {
     page victim;
+    // To silence warning: since these values are undefined if mode ==1
 
     // Implement individual page replacement algorithms here
     if (mode == 0) {  // Page replacement method - Random
-
+        victim = replacePageRand(pageTable, page_number, rw, numFrames);
     } else if (mode == 1) {  // Page replacement method - FIFO
-
+        victim = replacePageClock(pageTable, page_number, rw, numFrames);
     } else if (mode == 2) {  // Page replacement method - LRU
         victim = replacePageLRU(pageTable, stack, page_number, rw, numFrames);
         // printf("pagenumber: %d, modified: %d", victim.pageNo, victim.modified);
