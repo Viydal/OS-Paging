@@ -92,7 +92,7 @@ int allocateFrame(int page_number, char rw) {
         newPage.modified = 1;
     }
 
-    int location ; // initialize to silence warning
+    int location=-1; // initialize to silence warning
     for (int i = 0; i < numFrames; i++) {
         // If spot is free set to relevant information
         if (pageTable[i].pageNo == -1) {
@@ -111,7 +111,6 @@ int allocateFrame(int page_number, char rw) {
  * returns chosen frame_no  */
 page selectVictim(int page_number, enum repl mode, char rw) {
     page victim;
-    // To silence warning: since these values are undefined if mode ==1
 
     // Implement individual page replacement algorithms here
     if (mode == 0) {  // Page replacement method - Random
