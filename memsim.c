@@ -35,6 +35,7 @@ int createMMU(int frames) {
     for (int i = 0; i < numFrames; i++) {
         pageTable[i].pageNo = -1;
         pageTable[i].modified = -1;
+		pageTable[i].use = -1;
     }
 
     // Initialise stack
@@ -62,6 +63,7 @@ int checkInMemory(int page_number, char rw) {
         // printf("%d, %d | ", pageTable[i].pageNo, page_number);
         if (pageTable[i].pageNo == page_number) {
             result = i;
+			pageTable[i].use = 1;
         }
     }
 
@@ -69,6 +71,7 @@ int checkInMemory(int page_number, char rw) {
         page newPage;
         newPage.pageNo = page_number;
         newPage.modified = 0;
+		newPage.use = 1;
         
         if (pageTable[result].modified == 1 || rw == 'W') {
             newPage.modified = 1;
@@ -86,12 +89,12 @@ int allocateFrame(int page_number, char rw) {
     page newPage;
     newPage.pageNo = page_number;
     newPage.modified = 0;
-	newPage.use = 1; // For clock alg
+	newPage.use = 0; // For clock alg
     if (rw == 'W') {
         newPage.modified = 1;
     }
 
-    int location;
+    int location = 0;
     for (int i = 0; i < numFrames; i++) {
         // If spot is free set to relevant information
         if (pageTable[i].pageNo == -1) {
@@ -229,6 +232,8 @@ int main(int argc, char *argv[]) {
                     printf("Discard    %8d \n", Pvictim.pageNo);
             }
         }
+
+		pageTable[frame_no].use = 1;
         if (rw == 'R') {
             if (debugmode) printf("reading    %8d \n", page_number);
         } else if (rw == 'W') {
