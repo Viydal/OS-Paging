@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "clock.h"
 #include "LRUMethod.h"
 #include "page.h"
 
@@ -85,6 +86,7 @@ int allocateFrame(int page_number, char rw) {
     page newPage;
     newPage.pageNo = page_number;
     newPage.modified = 0;
+	newPage.use = 1; // For clock alg
     if (rw == 'W') {
         newPage.modified = 1;
     }
@@ -118,6 +120,7 @@ page selectVictim(int page_number, enum repl mode, char rw) {
         victim = replacePageLRU(pageTable, stack, page_number, rw, numFrames);
         // printf("pagenumber: %d, modified: %d", victim.pageNo, victim.modified);
     } else if (mode == 3) {  // Page replacement method - CLOCK
+		victim = replacePageClock(pageTable, page_number, rw, numFrames);
 
     } else {
         printf("Invalid page replacement algorithm.\n");
