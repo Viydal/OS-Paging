@@ -36,6 +36,7 @@ int createMMU(int frames) {
     for (int i = 0; i < numFrames; i++) {
         pageTable[i].pageNo = -1;
         pageTable[i].modified = -1;
+		pageTable[i].use = -1; // For clock alg
     }
 
     // Initialise stack
@@ -230,6 +231,7 @@ int main(int argc, char *argv[]) {
                     printf("Discard    %8d \n", Pvictim.pageNo);
             }
         }
+		pageTable[frame_no].use = 1; // For clock alg
         if (rw == 'R') {
             if (debugmode) printf("reading    %8d \n", page_number);
         } else if (rw == 'W') {
