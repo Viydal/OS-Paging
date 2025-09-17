@@ -231,6 +231,7 @@ int main(int argc, char *argv[]) {
                     printf("Discard    %8d \n", Pvictim.pageNo);
             }
         }
+
 		pageTable[frame_no].use = 1; // For clock alg
         if (rw == 'R') {
             if (debugmode) printf("reading    %8d \n", page_number);

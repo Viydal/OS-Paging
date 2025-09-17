@@ -3,6 +3,10 @@
 
 int clockHand = 0;
 
+void initClock() {
+    clockHand = 0;
+}
+
 // Run replacement algorithm Clock
 page replacePageClock(page* pageTable, int pageNumber, char rw, int numFrames) {
     // Page not found, find a victim
