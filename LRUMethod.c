@@ -48,12 +48,12 @@ void updateStack(page* stack, page pageToAdd, int numFrames) {
 
     // Add page to stack
     if (replaceIndex == -1) {  // New page
-        for (int i = numFrames; i >= 0; i--) {
+        for (int i = numFrames - 1; i > 0; i--) {
             stack[i] = stack[i - 1];
         }
         stack[0] = pageToAdd;
     } else {
-        for (int i = replaceIndex; i >= 0; i--) {
+        for (int i = replaceIndex; i > 0; i--) {
             stack[i] = stack[i - 1];
         }
         stack[0] = pageToAdd;
