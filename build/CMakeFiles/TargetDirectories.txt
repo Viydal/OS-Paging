@@ -1,0 +1,3 @@
+/Users/michellenguyen/Documents/OPERATING_SYSTEM_SEM2_2025/OS-Paging/build/CMakeFiles/memsim.dir
+/Users/michellenguyen/Documents/OPERATING_SYSTEM_SEM2_2025/OS-Paging/build/CMakeFiles/edit_cache.dir
+/Users/michellenguyen/Documents/OPERATING_SYSTEM_SEM2_2025/OS-Paging/build/CMakeFiles/rebuild_cache.dir

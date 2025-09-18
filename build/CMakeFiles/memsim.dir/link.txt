@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/cc  -Wall -Wextra -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk -mmacosx-version-min=13.5 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/memsim.dir/memsim.c.o CMakeFiles/memsim.dir/LRUMethod.c.o CMakeFiles/memsim.dir/clock.c.o CMakeFiles/memsim.dir/rand.c.o -o memsim
