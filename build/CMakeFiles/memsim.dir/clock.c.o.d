@@ -37,5 +37,4 @@ CMakeFiles/memsim.dir/clock.c.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk/usr/include/sys/_types/_off_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk/usr/include/sys/_types/_ssize_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk/usr/include/secure/_stdio.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk/usr/include/secure/_common.h \
-  /Users/michellenguyen/Documents/OPERATING_SYSTEM_SEM2_2025/OS-Paging/LRUMethod.h
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk/usr/include/secure/_common.h

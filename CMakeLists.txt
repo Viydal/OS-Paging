@@ -18,7 +18,7 @@ set(SOURCES
     rand.c
 )
 
-# Header files (optional)
+# Header files
 set(HEADERS
     page.h
     LRUMethod.h
