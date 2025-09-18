@@ -67,6 +67,7 @@ int checkInMemory(int page_number, char rw) {
         }
     }
 
+		// If page number not found in page table
     if (result != -1) {
         page newPage;
         newPage.pageNo = page_number;
@@ -103,6 +104,7 @@ int allocateFrame(int page_number, char rw) {
         }
     }
 
+		// Update stack
     updateStack(stack, newPage, numFrames);
 
     return location;
@@ -131,6 +133,7 @@ page selectVictim(int page_number, enum repl mode, char rw) {
     return (victim);
 }
 
+// Print the current state of the page table
 void printTable(page *pageTable, int numFrames) {
     printf("\n");
     printf("PAGE TABLE\n");

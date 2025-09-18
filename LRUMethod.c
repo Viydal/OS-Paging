@@ -7,13 +7,14 @@ void printStack(page*, int);
 
 // Run replacement algorithm LRU
 page replacePageLRU(page* pageTable, page* stack, int pageNumber, char rw, int numFrames) {
-    // Update page table
+    // Update page table (wont happen)
     for (int i = 0; i < numFrames - 1; i++) {
         if (pageTable[i + 1].pageNo == -1) {
             pageTable[i] = stack[0];
         }
     }
 
+    // Take the last page from the stack (the victim)
 	page lastPage = stack[numFrames - 1];
 	for (int i = 0; i < numFrames; i++) {
 		if (stack[i + 1].pageNo == -1) {
@@ -21,6 +22,7 @@ page replacePageLRU(page* pageTable, page* stack, int pageNumber, char rw, int n
 		}
 	}
 
+    // New page to be inserted into the stack and page table
     page newPage;
     newPage.pageNo = pageNumber;
     newPage.modified = 0;
@@ -28,10 +30,10 @@ page replacePageLRU(page* pageTable, page* stack, int pageNumber, char rw, int n
         newPage.modified = 1;
     }
 
+    // Perform updates
     updateStack(stack, newPage, numFrames);
     updatePageTable(pageTable, lastPage, newPage, numFrames);
     
-	// printf("last page with number: %d\n", lastPage.pageNo);
 	return lastPage;
 }
 
@@ -60,6 +62,7 @@ void updateStack(page* stack, page pageToAdd, int numFrames) {
     }
 }
 
+// Update page table with the new page, replacing the relevant page
 void updatePageTable(page* pageTable, page pageToReplace, page newPage, int numFrames) {
     for (int i = 0; i < numFrames; i++) {
         if (pageTable[i].pageNo == pageToReplace.pageNo) {
@@ -69,6 +72,7 @@ void updatePageTable(page* pageTable, page pageToReplace, page newPage, int numF
     }
 }
 
+// Print the current stack
 void printStack(page* stack, int numFrames) {
 	printf("\n");
 	for (int i = 0; i < numFrames; i++) {
