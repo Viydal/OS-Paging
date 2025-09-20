@@ -26,7 +26,7 @@ repo/
 ├── memsim.c         # main source file
 ├── traces/          # sample trace files
 ├── README.md        # documentation
-└── Makefile         # (optional) build instructions
+└── Makefile         # build instructions
 ```
 
 ---
@@ -35,13 +35,18 @@ repo/
 
 * Compiler (e.g., `gcc`)
 * Standard C libraries
+* [Optional] Cmake - for debugging and stopping at breakpoints
 
 ---
 
-## 🛠️ Build
+## 🛠️ Build (with normal C++ command lines)
 
 ```bash
 gcc -o memsim memsim.c
+```
+or use Makefile
+```bash
+make run
 ```
 
 ---
@@ -51,20 +56,27 @@ gcc -o memsim memsim.c
 ```bash
 ./memsim <trace_file> <num_frames> <replacement_algorithm> <mode>
 ```
-
-### Arguments (to be changed)
-
-* `<trace_file>`: input memory trace file
-* `<num_frames>`: number of page frames in memory
-* `<replacement_algorithm>`: `rand` | `fifo` | `lru` | `clock`
-* `<mode>`: `quiet` | `debug`
-
+or use Makefile:
+```bash
+make gcc
+make sixpack
+make swim
+```
 ---
 
-## 🧪 Example
-
+## 🛠️ Debugging with CMake
+Set up and run the project as a CMake project:
+1. When first setting up the project, without a `build` folder: 
 ```bash
-./memsim traces/trace1 4 lru debug
+mkdir -p build && cd build && cmake .. && cmake --build . && cd ..
+```
+2. To rerun, have to delete the build folder first.
+```bash
+rm -rf build && mkdir -p build && cd build && cmake .. && cmake --build . && cd ..
+```
+3. The executable `memsim` is created as usual, however, not in the parent directory but in the `build` folder. To use this `memsim`, include the filepath to the `build` folder, for example:
+```bash
+./build/memsim traces/realTraces/swim.trace 4 lru quiet
 ```
 
 ---
